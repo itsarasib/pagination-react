@@ -12,6 +12,7 @@ import { Pagination } from "../components/Pagination";
 // }
 
 //Hi Ten
+//Test add branch
 // bad practice, arrow function, type
 function Home(){
 
