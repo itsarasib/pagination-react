@@ -11,7 +11,7 @@ import { Pagination } from "../components/Pagination";
 //     return temp
 // }
 
-
+//Hi Ten
 // bad practice, arrow function, type
 function Home(){
 
