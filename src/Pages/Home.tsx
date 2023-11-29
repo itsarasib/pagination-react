@@ -2,53 +2,53 @@ import { useEffect, useState } from "react";
 import { Repo } from "../types";
 import Repos from "../components/Box";
 import { Pagination } from "../components/Pagination";
+import { Box, Text } from "@chakra-ui/react";
 
-// const getToN = (n: number) : number[] => {
-//     const temp = []
-//     for(let i = 1 ; i <= n ; i ++){
-//         temp.push(i)
-//     }
-//     return temp
-// }
+function Home() {
+  const [repo, setRepo] = useState<Repo[]>([]);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reposPerPage = 10;
 
-//Hi Ten
-//Test add branch
-// bad practice, arrow function, type
-function Home(){
+  useEffect(() => {
+    setIsLoading(true);
 
-    const [repos, setRepos] = useState<Repo[]>([])
-    // const [totalPage, setTotalPage] = useState<number>(0)
-    // const   reposPerPage = 5
+    const delay = 3000;
 
-    // where type
-    // bad naming practice
-    const [pages, setPages] = useState(1);
-    const reposPerPage = 5
-    
+    const fetchDataWithDelay = () => {
+      fetch("https://api.github.com/repositories")
+        .then((response) => response.json())
+        .then((data: Repo[]) => {
+          setRepo(data);
+          console.log(data.length); // delete later
+          setIsLoading(false);
+        });
+    };
 
+    const timerId = setTimeout(fetchDataWithDelay, delay);
 
-    useEffect(() =>{
-        fetch('https://api.github.com/repositories')
-        .then(response => response.json())
-        .then((data : Repo[])=>{
-            setRepos(data)
-            console.log(data.length);
-            // setTotalPage(Math.ceil(data.length / reposPerPage))
-        })
-    },[])
+    return () => clearTimeout(timerId);
+  }, []);
 
-    //CHATGPT
-    const indexOfLastRepo = pages * reposPerPage;
-    const indexOfFirstRepo = indexOfLastRepo - reposPerPage;
-    const currentRepo = repos.slice(indexOfFirstRepo, indexOfLastRepo);
+  const indexOfLastRepo = currentPage * reposPerPage;
+  const indexOfFirstRepo = indexOfLastRepo - reposPerPage;
+  const currentRepo = repo.slice(indexOfFirstRepo, indexOfLastRepo);
 
-    return(
-        <div>
-            <Repos repos={currentRepo}/>
-            {/* <Pagination total={getToN(totalPage)} /> */}
-            <Pagination repoPerPage={reposPerPage} totalRepos={repos.length} setPage={setPages} currentPages={pages}/>
-        </div>
-    )
-
+  return (
+    <Box my="20px">
+      <Text textAlign="center" fontSize="70px" fontWeight="bold" m="25">
+        Repo Pagination
+      </Text>
+      <Box>
+        <Repos repos={currentRepo} loading={isLoading} />
+        <Pagination
+          reposPerPage={reposPerPage}
+          totalRepos={repo.length}
+          currentPage={currentPage}
+          setCurrentPages={setCurrentPage}
+        />
+      </Box>
+    </Box>
+  );
 }
 export default Home;
